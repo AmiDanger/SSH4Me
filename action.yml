@@ -1,6 +1,9 @@
 name: 'SSH4Me'
+author: 'jisan09'
+description: 'Deploy SSH tunnel stack using ngrok on Portainer'
 
-
+runs:
+  using: 'composite'
   steps:
     - name: 'Set up Docker'
       shell: bash
@@ -13,7 +16,29 @@ name: 'SSH4Me'
       run: |
         docker build -t ssh4me --build-arg AUTH_TOKEN=$AUTH_TOKEN --build-arg PASSWORD=$PASSWORD .
 
-    - name: 'Run Docker container'
+    - name: 'Login to Portainer'
       shell: bash
-      run: docker run docker.io/library/ssh4me
+      run: |
+        export PORTAINER_TOKEN=$(curl -s -X POST -H "Content-Type: application/json" -d "{\"Username\": \"$PORTAINER_USERNAME\", \"Password\": \"$PORTAINER_PASSWORD\"}" http://$PORTAINER_HOST/api/auth | jq -r .jwt)
+    
+    - name: 'Deploy stack to Portainer'
+      shell: bash
+      run: |
+        curl -X POST "http://$PORTAINER_HOST/api/stacks" \
+          -H "Authorization: Bearer $PORTAINER_TOKEN" \
+          -H "Content-Type: application/json" \
+          -d '{
+                "Name": "ssh4me-stack",
+                "SwarmID": "",
+                "StackFileContent": "version: \"3.3\"\nservices:\n  ssh4me:\n    image: ssh4me\n    ports:\n      - \"2222:22\"\n    environment:\n      - AUTH_TOKEN=$AUTH_TOKEN\n      - PASSWORD=$PASSWORD",
+                "Env": [
+                  { "name": "AUTH_TOKEN", "value": "'"$AUTH_TOKEN"'" },
+                  { "name": "PASSWORD", "value": "'"$PASSWORD"'" }
+                ],
+                "Prune": true
+              }'
 
+branding:
+  icon: 'terminal'
+  color: 'gray-dark'
+  
