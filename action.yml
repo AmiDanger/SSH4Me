@@ -3,14 +3,18 @@ version: "3.9"
 services:
   emitest:
     build: .
-    image: ssh:${TAG}
+    image: ssh:${TAG:-latest}
     container_name: ssh
     network_mode: host
     pull_policy: never
+    environment:
+      - SSH_PORT=${SSH_PORT:-22}
+      - ROOT_PASSWORD=${ROOT_PASSWORD:-defaultpassword}
+  
   restarter:
     image: docker:cli
     volumes: ["/var/run/docker.sock:/var/run/docker.sock"]
-    command: ["/bin/sh", "-c", "while true; do sleep 43200; docker restart ssh; done"]
+    command: ["/bin/sh", "-c", "while true; do sleep ${RESTART_INTERVAL:-43200}; docker restart ssh; done"]
     restart: unless-stopped
     network_mode: host
 
@@ -18,3 +22,4 @@ networks:
   default: 
     external: true
     name: host
+    
