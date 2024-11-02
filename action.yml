@@ -1,6 +1,4 @@
 name: 'SSH4Me'
-author: 'jisan09'
-description: 'Build SSH tunnel using ngrok over workflow'
 
 runs:
   using: 'composite'
