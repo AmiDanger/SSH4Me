@@ -1,7 +1,6 @@
 name: 'SSH4Me'
 
-runs:
-  using: 'composite'
+
   steps:
     - name: 'Set up Docker'
       shell: bash
