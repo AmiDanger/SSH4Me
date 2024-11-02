@@ -1,25 +1,21 @@
-version: "3.9"
+version: "3.8"
 
 services:
-  emitest:
-    build: .
-    image: ssh:${TAG:-latest}
-    container_name: ssh
-    network_mode: host
-    pull_policy: never
-    environment:
-      - SSH_PORT=${SSH_PORT:-22}
-      - ROOT_PASSWORD=${ROOT_PASSWORD:-defaultpassword}
-  
-  restarter:
-    image: docker:cli
-    volumes: ["/var/run/docker.sock:/var/run/docker.sock"]
-    command: ["/bin/sh", "-c", "while true; do sleep ${RESTART_INTERVAL:-43200}; docker restart ssh; done"]
+  ubuntu_vps:
+    image: ubuntu:latest
+    container_name: ubuntu_vps
     restart: unless-stopped
-    network_mode: host
+    network_mode: host  # Allows direct network access
+    environment:
+      - ROOT_PASSWORD=Pirate  # Replace with your password
+    volumes:
+      - ubuntu_data:/root  # Persist data in the root directory
+    entrypoint: /bin/bash -c "apt update && apt install -y openssh-server && \
+                              echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config && \
+                              echo 'root:${ROOT_PASSWORD}' | chpasswd && \
+                              service ssh start && tail -f /dev/null"
 
-networks:
-  default: 
-    external: true
-    name: host
+volumes:
+  ubuntu_data:
+    driver: local
     
