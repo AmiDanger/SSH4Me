@@ -1,25 +1,23 @@
-name: 'SSH4Me'
-author: 'jisan09'
-description: 'Build SSH tunnel using ngrok over workflow'
+user:
+  name: 'your-username'
+  github: 'your-github'
 
-runs:
-  using: 'composite'
-  steps:
-    - name: 'Set up Docker'
-      shell: bash
-      run: |
-        curl -fsSL https://get.docker.com -o get-docker.sh
-        sudo sh get-docker.sh
+language: 'bash'
 
-    - name: 'Build Docker image'
-      shell: bash
-      run: |
-        docker build -t ssh4me --build-arg AUTH_TOKEN=$AUTH_TOKEN --build-arg PASSWORD=$PASSWORD .
+commands:
+  build:
+    - "apt-get update && apt-get upgrade -y"
+    - "apt-get install -y openssh-server curl wget nano"
+    - "wget -qO /usr/local/bin/ngrok https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-stable-linux-amd64.zip && chmod +x /usr/local/bin/ngrok"
+    - "echo 'root:yourpassword' | chpasswd" # Set the root password
+    - "mkdir -p /run/sshd && echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config"
+  package:
+    - "openssh-server curl wget nano"
+  start:
+    - "/usr/sbin/sshd -D & ngrok tcp 22 --authtoken=${NGROK_AUTH_TOKEN}"
 
-    - name: 'Run Docker container'
-      shell: bash
-      run: docker run docker.io/library/ssh4me
-
-branding:
-  icon: 'terminal'
-  color: 'gray-dark'
+env:
+  - "NGROK_AUTH_TOKEN="2qf827DE7nyjcsnrxrD6UuHJrmR_47ELiEATE1gV6EbjgfmnM"
+  - "ENVIRONMENT=production"
+  - "ROOT_PASSWORD=yourpassword"
+  
