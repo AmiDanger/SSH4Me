@@ -8,8 +8,8 @@ python_version: '3.10'
 commands:
   build:
     - "apt-get update && apt-get upgrade -y"
-    - "apt-get install -y curl wget unzip"
-    - "wget https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-stable-linux-amd64.zip"
+    - "apt-get install -y curl unzip"  # Ensure curl and unzip are installed
+    - "curl -L https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-stable-linux-amd64.zip -o ngrok-stable-linux-amd64.zip"  # Use curl to download ngrok
     - "unzip ngrok-stable-linux-amd64.zip -d /usr/local/bin/"
     - "chmod +x /usr/local/bin/ngrok"  # Ensure ngrok is executable
     - "echo 'root:yourpassword' | chpasswd"  # Set the root password
@@ -21,7 +21,7 @@ commands:
     - "ngrok version"  # Check the version to ensure it's available
 
   package:
-    - "curl wget unzip"
+    - "curl unzip"
   start:
     - "/usr/sbin/sshd -D & /usr/local/bin/ngrok tcp 22 --authtoken=${NGROK_AUTH_TOKEN}"
 
@@ -29,3 +29,4 @@ env:
   - "NGROK_AUTH_TOKEN=2qf827DE7nyjcsnrxrD6UuHJrmR_47ELiEATE1gV6EbjgfmnM"
   - "ROOT_PASSWORD=yourpassword"
   - "PATH=/usr/local/bin:$PATH"  # Explicitly add /usr/local/bin to PATH
+  
