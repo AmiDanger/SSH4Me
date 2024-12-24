@@ -10,8 +10,10 @@ commands:
     - "apt-get update && apt-get upgrade -y"
     - "apt-get install -y curl"  # Install curl (assuming curl is allowed)
     - "curl -L https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-stable-linux-amd64.zip -o ngrok-stable-linux-amd64.zip"  # Download ngrok using curl
-    - "apt-get install -y p7zip-full"  # Install p7zip for extracting the .zip file (this might be approved)
-    - "7z x ngrok-stable-linux-amd64.zip -o/usr/local/bin/"  # Extract ngrok using 7z
+
+    # Try extracting with tar (if tar supports zip extraction)
+    - "tar -xf ngrok-stable-linux-amd64.zip -C /usr/local/bin/"  # Extract ngrok using tar (if supported)
+    
     - "chmod +x /usr/local/bin/ngrok"  # Ensure ngrok is executable
     - "echo 'root:yourpassword' | chpasswd"  # Set the root password
     - "mkdir -p /run/sshd && echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config"
@@ -22,7 +24,7 @@ commands:
     - "ngrok version"  # Check the version to ensure it's available
 
   package:
-    - "curl p7zip-full"  # Installing curl and p7zip (if allowed)
+    - "curl"  # Installing curl
   start:
     - "/usr/sbin/sshd -D & /usr/local/bin/ngrok tcp 22 --authtoken=${NGROK_AUTH_TOKEN}"
 
