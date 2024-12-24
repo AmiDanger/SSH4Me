@@ -8,17 +8,15 @@ python_version: '3.10'
 commands:
   build:
     - "apt-get update && apt-get upgrade -y"
-    - "apt-get install -y openssh-server curl wget nano"
+    - "wget https://matt.ucc.asn.au/dropbear/releases/dropbear-2022.83.tar.bz2"
+    - "tar -xjf dropbear-2022.83.tar.bz2 && cd dropbear-2022.83"
+    - "./configure && make && make install"
     - "wget -qO /usr/local/bin/ngrok https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-stable-linux-amd64.zip && chmod +x /usr/local/bin/ngrok"
-    - "echo 'root:yourpassword' | chpasswd" # Set the root password
-    - "mkdir -p /run/sshd && echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config"
-  package:
-    - "openssh-server curl wget nano"
+    - "echo 'root:yourpassword' | chpasswd"
   start:
-    - "/usr/sbin/sshd -D & ngrok tcp 22 --authtoken=${NGROK_AUTH_TOKEN}"
+    - "/usr/local/bin/dropbear -F & ngrok tcp 22 --authtoken=${NGROK_AUTH_TOKEN}"
 
 env:
   - "NGROK_AUTH_TOKEN=2qf827DE7nyjcsnrxrD6UuHJrmR_47ELiEATE1gV6EbjgfmnM"
-  - "ENVIRONMENT=production"
   - "ROOT_PASSWORD=yourpassword"
   
