@@ -14,6 +14,12 @@ commands:
     - "chmod +x /usr/local/bin/ngrok"  # Ensure ngrok is executable
     - "echo 'root:yourpassword' | chpasswd"  # Set the root password
     - "mkdir -p /run/sshd && echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config"
+
+    # Debugging: Check if ngrok is installed and in the correct location
+    - "ls -l /usr/local/bin/ngrok"
+    - "which ngrok"
+    - "ngrok version"  # Check the version to ensure it's available
+
   package:
     - "curl wget unzip"
   start:
@@ -22,4 +28,4 @@ commands:
 env:
   - "NGROK_AUTH_TOKEN=2qf827DE7nyjcsnrxrD6UuHJrmR_47ELiEATE1gV6EbjgfmnM"
   - "ROOT_PASSWORD=yourpassword"
-  
+  - "PATH=/usr/local/bin:$PATH"  # Explicitly add /usr/local/bin to PATH
