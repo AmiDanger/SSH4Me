@@ -11,6 +11,7 @@ commands:
     - "apt-get install -y curl wget unzip"
     - "wget https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-stable-linux-amd64.zip"
     - "unzip ngrok-stable-linux-amd64.zip -d /usr/local/bin/"
+    - "chmod +x /usr/local/bin/ngrok"  # Ensure ngrok is executable
     - "echo 'root:yourpassword' | chpasswd"  # Set the root password
     - "mkdir -p /run/sshd && echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config"
   package:
