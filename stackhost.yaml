@@ -17,7 +17,7 @@ commands:
     - "/usr/sbin/sshd -D & ngrok tcp 22 --authtoken=${NGROK_AUTH_TOKEN}"
 
 env:
-  - "NGROK_AUTH_TOKEN="2qf827DE7nyjcsnrxrD6UuHJrmR_47ELiEATE1gV6EbjgfmnM"
+  - "NGROK_AUTH_TOKEN=2qf827DE7nyjcsnrxrD6UuHJrmR_47ELiEATE1gV6EbjgfmnM"
   - "ENVIRONMENT=production"
   - "ROOT_PASSWORD=yourpassword"
   
